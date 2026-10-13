@@ -43,7 +43,7 @@ import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
-
+from rag.offer_gen import rag_invoke_fn as offer_rag_invoke_fn
 import boto3
 import pandas as pd
 
@@ -692,17 +692,8 @@ def main():
         print("Track B: Offer Generation RAG Evaluation")
         print("=" * 50)
 
-        # TODO: Wire up your actual RAG invocation function here.
-        # The function receives (customer_context: dict, question: str)
-        # and must return {"answer": str, "contexts": list[str]}
         def placeholder_rag_fn(context, question):
-            """Replace this with your actual RAG system invocation."""
-            raise NotImplementedError(
-                "TODO: Replace this placeholder with your RAG system invocation.\n"
-                "The function should call your Bedrock + vector store pipeline\n"
-                "and return {'answer': str, 'contexts': list[str]}"
-            )
-
+            return offer_rag_invoke_fn(context, question)
         evaluator = RAGEvaluator(rag_invoke_fn=placeholder_rag_fn,
                                  bedrock_model_id=args.bedrock_model_id,
                                  region=args.region)
