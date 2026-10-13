@@ -73,11 +73,11 @@ do not recalculate tier from incomplete customer data.
 - Points earn rates apply to qualifying merchandise spend.
   Do not describe the normal tier earn rate as a special bonus promotion.
 - Birthday reward amounts describe tier benefits; they do not establish
+  that a reward is currently available to this customer.
 - Points expire 18 months after the member's most recent qualifying
   purchase, and any qualifying purchase resets the clock on the entire
   balance [POL-LOY-011]. Do not claim the customer has a points balance
   or that expiration is imminent unless supplied data confirms it.
-  that a reward is currently available to this customer.
 - Free shipping covers standard service only.
   Expedited and overnight shipping are charged at full rate for every tier.
 - Free standard-shipping thresholds use eligible order subtotal after

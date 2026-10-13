@@ -25,7 +25,7 @@ def load_prompt_template(template_number):
     return template_path.read_text(encoding="utf-8")
 
 def load_policy_documents():
-    files = list(Path("/northstar-policy-docs").glob("*.md"))
+    files = list((rag_dir.parent / "northstar-policy-docs").glob("*.md"))
     documents = []
 
     for file in files:
@@ -89,36 +89,40 @@ def generate_offer(customer_context, question,vector_store):
         for document in retrieved_documents
     )
 
-    prompt = f"""
-You are NorthStar's retention-offer assistant.
+    system_prompt = load_prompt_template(1).format(
+        retrieved_context=policy_context
+    )
 
-Generate a personalized offer in 2-3 sentences using only the customer
-profile and policy excerpts below.
+    customer_prompt = load_prompt_template(2).format(
+        customer_id=customer_context.get("customer_id", "Unknown"),
+        loyalty_tier=customer_context.get("loyalty_tier", "Unknown"),
+        churn_probability=customer_context.get("churn_probability", 0),
+        days_since_last_purchase=customer_context.get(
+            "days_since_last_purchase", "Unknown"
+        ),
+        total_lifetime_value=customer_context.get(
+            "total_lifetime_value", 0
+        ),
+        avg_order_value=customer_context.get("avg_order_value", 0),
+        category_diversity_score=customer_context.get(
+            "category_diversity_score", 0
+        ),
+        online_to_store_ratio=customer_context.get(
+            "online_to_store_ratio", 0
+        ),
+        top_categories=", ".join(
+            customer_context.get("top_categories", [])
+        ) or "Unknown",
+    )
 
-Rules:
-- Recommend a category only from the customer's top_categories.
-- Do not invent discounts, promo codes, products, or bonus points.
-- Do not promise benefits unless eligibility is supported by the evidence.
-- Loyalty tiers are determined by trailing 12-month qualifying spend.
-  If the supplied tier has not been verified against that rule, qualify
-  tier-specific benefits instead of promising them.
-- Respect shipping restrictions, return windows, final-sale exclusions,
-  and retention-offer combination rules.
-- Retention offers are generally valid for 45 days unless the policy says
-  otherwise.
-- Include the source filename or policy ID in your answer.
+    safety_prompt = load_prompt_template(5)
 
-Customer profile:
-{customer_context}
-
-Request:
-{question}
-
-Retrieved policy excerpts:
-{policy_context}
-
-Write the offer now.
-"""
+    prompt = (
+        f"{system_prompt}\n\n"
+        f"{safety_prompt}\n\n"
+        f"{customer_prompt}\n\n"
+        "Follow the system prompt's policy-citation requirements."
+    )
 
     llm = ChatBedrock(model_id=gen_model, model_kwargs={"temperature": 0.1, "max_tokens": 300,},)
 
