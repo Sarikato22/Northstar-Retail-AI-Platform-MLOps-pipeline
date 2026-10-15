@@ -359,7 +359,7 @@ def build_bedrock_judge(model_id: str, region: str = "us-east-1"):
 
     llm = LangchainLLMWrapper(ChatBedrock(
         model_id=model_id, region_name=region,
-        model_kwargs={"temperature": 0},   # judging should be deterministic
+        model_kwargs={"temperature": 0, "max_tokens": 2048},   # judging should be deterministic
     ))
     embeddings = LangchainEmbeddingsWrapper(BedrockEmbeddings(
         model_id="amazon.titan-embed-text-v2:0", region_name=region,

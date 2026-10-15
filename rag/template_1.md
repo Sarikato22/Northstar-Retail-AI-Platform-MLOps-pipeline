@@ -38,10 +38,11 @@ rules in Safety Constraints.
    Do not invent products, SKUs, prices, inventory, or category preferences.
    If top_categories is missing or empty, do not invent a category.
 
-3. Select a specific incentive supported by the retrieved policies and
-   applicable to this customer.
-   An existing loyalty benefit may be the incentive; do not present it as
-   a newly issued promotion or an exclusive discount.
+3. Select the most relevant specific incentive supported by the retrieved policies and applicable to the customer's supplied profile.
+   - Review all retrieved policy passages before choosing the incentive.
+   - Prefer a benefit that directly matches the customer's supplied loyalty-tier label and top_categories, when the policy context supports it.
+   - Do not ignore a more relevant, explicitly supported benefit in favor of an unrelated policy detail.
+   - An existing loyalty benefit may be the incentive; do not present it as a newly issued promotion or an exclusive discount.
 
 4. Check every condition relevant to the chosen incentive:
    - Use current tier for benefits used now.

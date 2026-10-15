@@ -5,7 +5,7 @@ from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 embedding_model = "amazon.titan-embed-text-v2:0"
-gen_model = "anthropic.claude-3-haiku-20240307-v1:0"
+gen_model = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
 
 chunk_size = 800
 chunk_overlap = 120
@@ -39,7 +39,14 @@ def load_prompt_template(template_number):
 def load_policy_documents():
     documents = []
 
-    for file in sorted(policy_dir.glob("*.md")):
+    for filename in policy_sources:
+        file = policy_dir / filename
+
+        if not file.is_file():
+            raise FileNotFoundError(
+                f"Policy document not found: {file}"
+            )
+
         text = file.read_text(encoding="utf-8").strip()
 
         if text:
@@ -49,11 +56,6 @@ def load_policy_documents():
                     metadata={"source": file.name},
                 )
             )
-
-    if not documents:
-        raise FileNotFoundError(
-            f"No policy documents found in {policy_dir}"
-        )
 
     return documents
 
@@ -90,12 +92,21 @@ def retrieve_policy_context(vector_store, question, customer_context):
     #Ignoring FAQ
     policy_filter = {"source": {"$in": policy_sources}}
 
-    return vector_store.similarity_search(query,k=top_n,filter=policy_filter,)
+    return vector_store.similarity_search(query,k=top_n)
 
 def generate_offer(customer_context, question, vector_store):
     retrieved_documents = retrieve_policy_context(vector_store,question,customer_context,)
 
-    contexts = [document.page_content for document in retrieved_documents]
+    contexts = [
+    document.page_content for document in retrieved_documents
+    ]
+    contexts.append(
+        "Customer profile: "
+        + ", ".join(
+            f"{key}={value}"
+            for key, value in customer_context.items()
+        )
+    )
     #Fallback
     if not retrieved_documents:
         return {
@@ -196,6 +207,6 @@ if __name__ == "__main__":
     documents = load_policy_documents()
     document_chunks = split_policy_documents(documents)
 
-    # print(f"Loaded {len(documents)} policy documents.")
-    # print(f"Created {len(document_chunks)} chunks.")
-    # print("Local document check complete. No Bedrock calls were made.")
+    print(f"Loaded {len(documents)} policy documents.")
+    print(f"Created {len(document_chunks)} chunks.")
+    print("Local document check complete. No Bedrock calls were made.")
