@@ -1,0 +1,67 @@
+{
+  "auc_roc": 0.7779,
+  "precision_top10": 0.7033,
+  "recall_top10": 0.3197,
+  "auc_vs_baseline": 0.055,
+  "baseline_auc": 0.7229,
+  "lift_ci_low": 0.0365,
+  "lift_ci_high": 0.073,
+  "positive_rate_val": 0.22,
+  "n_val_samples": 3000,
+  "eval_timestamp": "2026-10-15T02:38:58.088765+00:00",
+  "evaluation_passed": true,
+  "evaluation_failures": [],
+  "slice_evaluation": {
+    "Bronze": {
+      "n": 1071,
+      "auc_roc": 0.751,
+      "recall_top10": 0.2881,
+      "aggregate_recall_top10": 0.3197,
+      "below_aggregate_by_10pp": false,
+      "too_small_for_reliable_claim": false,
+      "auc_undefined_single_class": false
+    },
+    "Gold": {
+      "n": 483,
+      "auc_roc": 0.7434,
+      "recall_top10": 0.3077,
+      "aggregate_recall_top10": 0.3197,
+      "below_aggregate_by_10pp": false,
+      "too_small_for_reliable_claim": false,
+      "auc_undefined_single_class": false
+    },
+    "Platinum": {
+      "n": 307,
+      "auc_roc": 0.8851,
+      "recall_top10": 0.4762,
+      "aggregate_recall_top10": 0.3197,
+      "below_aggregate_by_10pp": false,
+      "too_small_for_reliable_claim": false,
+      "auc_undefined_single_class": false
+    },
+    "Silver": {
+      "n": 1139,
+      "auc_roc": 0.7082,
+      "recall_top10": 0.2301,
+      "aggregate_recall_top10": 0.3197,
+      "below_aggregate_by_10pp": false,
+      "too_small_for_reliable_claim": false,
+      "auc_undefined_single_class": false
+    }
+  },
+  "confusion_matrix_threshold": 0.5,
+  "confusion_matrix_labels": [
+    "not_churn",
+    "churn"
+  ],
+  "confusion_matrix": [
+    [
+      1709,
+      631
+    ],
+    [
+      229,
+      431
+    ]
+  ]
+}

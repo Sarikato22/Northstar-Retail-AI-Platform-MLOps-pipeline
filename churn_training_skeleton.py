@@ -376,6 +376,10 @@ def load_features_from_feature_store(
         output_location=output_location,
     )
     query.wait()
+    print(
+    f"Athena QueryExecutionId: "
+    f"{query.get_query_execution()['QueryExecution']['QueryExecutionId']}"
+)
     df = query.as_dataframe()
 
     if df.empty:
@@ -1094,7 +1098,10 @@ def main():
             args.training_end_date,
             args.artifacts_bucket,
         )
-
+    # 1b. Drop rows with no label BEFORE extracting X, so df, X, y and tiers
+    #     all have the same row order. preprocess_features() drops them too,
+    #     but doing it there would misalign df[SLICE_COLUMN].
+    df = df.dropna(subset=[LABEL_COLUMN]).reset_index(drop=True)
     # 2. Preprocess
     X, y, clean_df = preprocess_features(df)
 

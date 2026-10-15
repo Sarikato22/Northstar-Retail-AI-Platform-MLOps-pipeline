@@ -1,49 +1,49 @@
 {
-  "auc_roc": 0.7796,
-  "precision_top10": 0.73,
-  "recall_top10": 0.3318,
-  "auc_vs_baseline": 0.0568,
+  "auc_roc": 0.7779,
+  "precision_top10": 0.7033,
+  "recall_top10": 0.3197,
+  "auc_vs_baseline": 0.055,
   "baseline_auc": 0.7229,
-  "lift_ci_low": 0.0361,
-  "lift_ci_high": 0.0759,
+  "lift_ci_low": 0.0365,
+  "lift_ci_high": 0.073,
   "positive_rate_val": 0.22,
   "n_val_samples": 3000,
-  "eval_timestamp": "2026-10-10T23:09:13.082024+00:00",
+  "eval_timestamp": "2026-10-15T03:05:50.742208+00:00",
   "evaluation_passed": true,
   "evaluation_failures": [],
   "slice_evaluation": {
     "Bronze": {
       "n": 1071,
-      "auc_roc": 0.7543,
-      "recall_top10": 0.2853,
-      "aggregate_recall_top10": 0.3318,
+      "auc_roc": 0.751,
+      "recall_top10": 0.2881,
+      "aggregate_recall_top10": 0.3197,
       "below_aggregate_by_10pp": false,
       "too_small_for_reliable_claim": false,
       "auc_undefined_single_class": false
     },
     "Gold": {
       "n": 483,
-      "auc_roc": 0.74,
-      "recall_top10": 0.2885,
-      "aggregate_recall_top10": 0.3318,
+      "auc_roc": 0.7434,
+      "recall_top10": 0.3077,
+      "aggregate_recall_top10": 0.3197,
       "below_aggregate_by_10pp": false,
       "too_small_for_reliable_claim": false,
       "auc_undefined_single_class": false
     },
     "Platinum": {
       "n": 307,
-      "auc_roc": 0.8828,
-      "recall_top10": 0.5714,
-      "aggregate_recall_top10": 0.3318,
+      "auc_roc": 0.8851,
+      "recall_top10": 0.4762,
+      "aggregate_recall_top10": 0.3197,
       "below_aggregate_by_10pp": false,
       "too_small_for_reliable_claim": false,
       "auc_undefined_single_class": false
     },
     "Silver": {
       "n": 1139,
-      "auc_roc": 0.7116,
-      "recall_top10": 0.2699,
-      "aggregate_recall_top10": 0.3318,
+      "auc_roc": 0.7082,
+      "recall_top10": 0.2301,
+      "aggregate_recall_top10": 0.3197,
       "below_aggregate_by_10pp": false,
       "too_small_for_reliable_claim": false,
       "auc_undefined_single_class": false
@@ -56,12 +56,12 @@
   ],
   "confusion_matrix": [
     [
-      1797,
-      543
+      1709,
+      631
     ],
     [
-      265,
-      395
+      229,
+      431
     ]
   ]
 }

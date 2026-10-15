@@ -1,0 +1,70 @@
+sagemaker.config INFO - Not applying SDK defaults from location: C:\ProgramData\sagemaker\sagemaker\config.yaml
+sagemaker.config INFO - Not applying SDK defaults from location: C:\Users\sarah\AppData\Local\sagemaker\sagemaker\config.yaml
+============================================================
+NorthStar Churn Prediction ΓÇö Training Script
+============================================================
+Athena QueryExecutionId: 5802afcb-c9cf-41ff-8b05-7472e335fac2
+Loaded 9,999 customers from the Feature Store offline store.
+Preprocessing 9,999 samples...
+  Positive class rate: 22.0%
+  Feature matrix shape: (9999, 11)
+
+Train: 6,999 | Validation: 3,000
+
+Training XGBoost with params: {
+  "objective": "binary:logistic",
+  "eval_metric": [
+    "logloss",
+    "auc"
+  ],
+  "max_depth": 6,
+  "eta": 0.1,
+  "min_child_weight": 5,
+  "subsample": 0.8,
+  "colsample_bytree": 0.8,
+  "scale_pos_weight": 3.544805194805195,
+  "seed": 42,
+  "verbosity": 1
+}
+[0]	train-logloss:0.66855	train-auc:0.78082	validation-logloss:0.67031	validation-auc:0.75309
+[25]	train-logloss:0.48160	train-auc:0.85748	validation-logloss:0.52000	validation-auc:0.78026
+[30]	train-logloss:0.47148	train-auc:0.86481	validation-logloss:0.51706	validation-auc:0.77790
+python : C:\Users\sarah\cs401r--shc49-\churn_training_skeleton.py:939: 
+UserWarning: [21:05:52] WARNING: 
+C:\actions-runner\_work\xgboost\xgboost\src\c_api\c_api.cc:1573: Saving 
+model in the UBJSON format as default.  You can use a file extension: 
+`json` or `ubj` to choose between formats.
+At line:1 char:1
++ python .\churn_training_skeleton.py `
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\sarah\...etween fo 
+   rmats.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  
+C:\Users\sarah\cs401r--shc49-\churn_training_skeleton.py:1000: 
+UserWarning: [21:05:53] WARNING: 
+C:\actions-runner\_work\xgboost\xgboost\src\c_api\c_api.cc:1573: Saving 
+model in the UBJSON format as default.  You can use a file extension: 
+`json` or `ubj` to choose between formats.
+  inference_model_path = os.path.join(
+
+ΓöÇΓöÇ Evaluation Results ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+  precision_top10          : 0.7033  (threshold: 0.5000)  Γ£ô PASS
+  recall_top10             : 0.3197  (threshold: 0.2500)  Γ£ô PASS
+  auc_lift 95% CI          : [0.0365, 0.0730]  (must exclude 0)  Γ£ô PASS
+  All thresholds passed Γ£ô
+  Bronze: n=1071, AUC=0.751, recall@10%=0.2881, below aggregate by >10pp=False, too small=False
+  Gold: n=483, AUC=0.7434, recall@10%=0.3077, below aggregate by >10pp=False, too small=False
+  Platinum: n=307, AUC=0.8851, recall@10%=0.4762, below aggregate by >10pp=False, too small=False
+  Silver: n=1139, AUC=0.7082, recall@10%=0.2301, below aggregate by >10pp=False, too small=False
+
+Γ£ô Model saved to ./model\model.xgb
+Registered model package as PendingManualApproval: arn:aws:sagemaker:us-east-1:716528268494:model-package/northstar-churn-models/3
+
+(no --mlflow-arn given; skipping experiment tracking)
+
+============================================================
+Training complete. AUC-ROC: 0.7779
+Evaluation gates passed: True
+============================================================
