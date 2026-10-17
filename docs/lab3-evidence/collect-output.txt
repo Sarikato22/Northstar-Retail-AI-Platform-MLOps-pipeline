@@ -7,24 +7,27 @@
   OK    docs/lab3-evidence/slice-evaluation.csv
   OK    docs/lab3-evidence/confusion-matrix.png
   OK    docs/lab3-evidence/feature-importance.png
-  FAIL  docs/lab3-evaluation-report.md  --  missing or empty -- Task 1: the evaluation report
+  OK    docs/lab3-evaluation-report.md
   OK    docs/lab3-model-design.md
   OK    docs/bedrock-access-verification.txt
-  FAIL  notebooks/lab3-demo.ipynb  --  missing or empty -- Task 2: committed WITH outputs from one clean Restart & Run All
+  OK    notebooks/lab3-demo.ipynb
   OK    docs/lab3-evidence/rag_eval.csv
-  FAIL  docs/lab3-evidence/track-b-examples.md  --  missing or empty -- Task 2B: 5 input/output pairs + 2 failure cases with fixes
+  OK    docs/lab3-evidence/track-b-examples.md
 [3/5] Content checks
   OK    gate precision_top10 >= 0.50
   OK    gate recall_top10 >= 0.25
   OK    gate lift 95% CI excludes zero
   OK    slice-evaluation.csv  --  4 tiers
+  WARN  demo notebook  --  execution counts are not 1..N -- outputs are not from one clean top-to-bottom run
   OK    rag_eval.csv  --  4 test cases (harness has 4+)
 [4/5] AWS exports: Athena, MLflow, Model Registry
-  FAIL  Athena query  --  no 'Athena QueryExecutionId: <id>' line in train-final.log (print it after query.run -- see the lab)
+  OK    Athena query  --  5802afcb-c9cf-41ff-8b05-7472e335fac2 SUCCEEDED, 682220 bytes scanned
   OK    MLflow App reuses Lab 1 infrastructure  --  northstar-dev-MLEngineer, s3://northstar-dev-data-716528268494/artifacts/mlflow/
-  FAIL  MLflow runs  --  mlflow is not installed (pip install mlflow sagemaker-mlflow)
+  OK    MLflow runs  --  4 runs with params and metrics in 'northstar-churn'
+  OK    MLflow runs vary  --  eta, num_round, max_depth
+  OK    consistency: MLflow  --  a tracked run matches auc_roc=0.7779
   OK    Model Registry  --  3 PendingManualApproval version(s); latest v3
   OK    consistency: registry  --  v2 metadata matches evaluation_metrics.json
 [5/5] Summary
-  17 OK, 0 WARN, 5 FAIL
-  Fix every FAIL, re-run, then teardown -> commit -> tag.
+  24 OK, 1 WARN, 0 FAIL
+  Evidence complete. Next: bash scripts/teardown-lab3.sh, then commit and tag lab3-submit.
