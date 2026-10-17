@@ -1,5 +1,5 @@
 tier,n,positives,auc,recall,aggregate_recall,below_aggregate_by_10pp,too_small_for_reliable_claim
-Bronze,1071,,0.751,0.2881,0.3197,False,False
-Gold,483,,0.7434,0.3077,0.3197,False,False
-Platinum,307,,0.8851,0.4762,0.3197,False,False
-Silver,1139,,0.7082,0.2301,0.3197,False,False
+Bronze,1071,236,0.751,0.2881,0.3197,False,False
+Gold,483,104,0.7434,0.3077,0.3197,False,False
+Platinum,307,42,0.8851,0.4762,0.3197,False,False
+Silver,1139,278,0.7082,0.2301,0.3197,False,False

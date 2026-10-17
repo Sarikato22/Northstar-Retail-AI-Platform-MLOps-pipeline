@@ -5,6 +5,12 @@ Generated: 2026-10-14T21:33:03
 Policy documents: 3
 Indexed chunks: 27
 
+RAGAS harness output: `docs/lab3-evidence/rag_eval.csv`
+
+Judge model: `us.anthropic.claude-haiku-4-5-20251001-v1:0` via Bedrock in `us-east-1`
+
+Judge embeddings: `amazon.titan-embed-text-v2:0`
+
 Offers below are outputs from the running RAG pipeline. Review each answer against the retrieved policies before describing it as correct.
 
 ## Example 1: CUST-10000317
@@ -135,9 +141,9 @@ Members earn **1 point per $1** of qualifying merchandise spend.
 
 ### Review
 
-- Policy claims verified against retrieved excerpts: [Complete after review]
-- Tier benefits accurate: [Complete after review]
-- Category recommendation relevant: [Complete after review]
+- Policy claims verified against retrieved excerpts: Yes. Gold free return shipping and the 30-day Gold return window are supported by the tier-benefits excerpt.
+- Tier benefits accurate: Yes. The offer does not claim Platinum's 60-day return window or free expedited shipping.
+- Category recommendation relevant: Yes. Outdoor and Footwear match the customer profile.
 
 ---
 
@@ -267,9 +273,9 @@ Points already redeemed against a subsequent purchase are not clawed back.
 
 ### Review
 
-- Policy claims verified against retrieved excerpts: [Complete after review]
-- Tier benefits accurate: [Complete after review]
-- Category recommendation relevant: [Complete after review]
+- Policy claims verified against retrieved excerpts: Yes. Bronze earns 1 point per dollar and receives free standard shipping only at the $75 threshold.
+- Tier benefits accurate: Yes. The offer does not claim free return shipping or higher-tier benefits.
+- Category recommendation relevant: Yes. Apparel matches the customer's only listed top category.
 
 ---
 
@@ -403,9 +409,9 @@ Points already redeemed against a subsequent purchase are not clawed back.
 
 ### Review
 
-- Policy claims verified against retrieved excerpts: [Complete after review]
-- Tier benefits accurate: [Complete after review]
-- Category recommendation relevant: [Complete after review]
+- Policy claims verified against retrieved excerpts: Yes, with one operational caveat: Platinum gear credit and 60-day return-window terms are supported, but actual unused credit availability would need account-system confirmation.
+- Tier benefits accurate: Yes. The cited benefits are Platinum-only benefits and are not extended to lower tiers.
+- Category recommendation relevant: Yes. Outdoor, Electronics, and Home match the customer profile.
 
 ---
 
@@ -537,9 +543,9 @@ Members earn **1 point per $1** of qualifying merchandise spend.
 
 ### Review
 
-- Policy claims verified against retrieved excerpts: [Complete after review]
-- Tier benefits accurate: [Complete after review]
-- Category recommendation relevant: [Complete after review]
+- Policy claims verified against retrieved excerpts: Yes. Silver earns 1.25 points per dollar and receives free standard shipping at the $50 threshold.
+- Tier benefits accurate: Yes. The offer avoids Gold benefits even though the prompt says the customer is near the Gold threshold.
+- Category recommendation relevant: Yes. Home and Beauty match the customer profile.
 
 ---
 
@@ -672,9 +678,9 @@ Members earn **1 point per $1** of qualifying merchandise spend.
 
 ### Review
 
-- Policy claims verified against retrieved excerpts: [Complete after review]
-- Tier benefits accurate: [Complete after review]
-- Category recommendation relevant: [Complete after review]
+- Policy claims verified against retrieved excerpts: Yes. Silver points and the $50 free-standard-shipping threshold are supported by the tier-benefits excerpt.
+- Tier benefits accurate: Yes. The offer does not claim Silver receives free return shipping or the Gold/Platinum shipping treatment beyond the $50 standard-shipping threshold.
+- Category recommendation relevant: Yes. Home and Beauty match the supplied customer interests.
 
 ---
 
@@ -684,7 +690,7 @@ Members earn **1 point per $1** of qualifying merchandise spend.
 
 **Fix proposed:** Require explicit support for every tier-specific benefit in the retrieved policy. Qualify uncertain tier eligibility and consult the authoritative loyalty record when available.
 
-**Evidence:** Add the actual affected example number and quote the generated claim and conflicting policy excerpt if observed. Otherwise, label this as a potential failure mode, not an observed model failure.
+**Evidence:** Potential failure mode. The reviewed examples did not show a direct higher-tier benefit being promised to a lower-tier customer, but examples 3 and 5 show why account-system verification matters before making unconditional tier or credit-availability claims.
 
 ## Failure case 2 — Unsupported claim or irrelevant offer
 
@@ -692,4 +698,4 @@ Members earn **1 point per $1** of qualifying merchandise spend.
 
 **Fix proposed:** Restrict policy claims to retrieved evidence, include the customer profile in evaluation contexts, remove invented deadlines, and verify category relevance before presenting the offer.
 
-**Evidence:** Add the actual affected example number and the generated claim if observed. Otherwise, retain this as a potential failure mode until a real output demonstrates it.
+**Evidence:** Potential failure mode. The reviewed examples stayed category-relevant, but RAGAS answer-relevance and context-recall scores were below the original targets, indicating the retriever and prompt can miss some of the reference answer's expected supporting context.
