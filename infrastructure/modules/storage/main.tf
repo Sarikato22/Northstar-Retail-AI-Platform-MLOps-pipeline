@@ -10,9 +10,9 @@
 # ONE bucket with four prefixes, not four buckets. Later labs derive the name
 # as ${project}-${environment}-data-${account_id}, so keep that shape.
 #
-# The four aws_s3_object resources create the prefixes. S3 has no real
-# directories; an empty object with a trailing slash is how a prefix is made
-# to exist before anything is written to it.
+# The aws_s3_object resources create durable marker objects inside the prefixes.
+# S3 has no real directories; placing a .keep object under each prefix makes it
+# exist before pipeline jobs write data there.
 
 data "aws_caller_identity" "current" {}
 
@@ -59,7 +59,7 @@ resource "aws_s3_object" "prefixes" {
   for_each = toset(var.prefixes)
 
   bucket  = aws_s3_bucket.data.id
-  key     = each.value
+  key     = "${each.value}.keep"
   content = ""
 }
 

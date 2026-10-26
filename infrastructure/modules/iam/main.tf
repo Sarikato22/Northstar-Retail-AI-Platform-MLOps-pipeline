@@ -50,9 +50,24 @@ resource "aws_iam_policy" "ml_engineer" {
         Action = [
           "s3:GetObject",
           "s3:ListBucket",
-          "sagemaker:CreateTrainingJob"
+          "sagemaker:CreateTrainingJob",
+          "sagemaker:AddTags",
+          "sagemaker:ListTags"
         ]
         Resource = "*"
+      },
+      {
+        Sid    = "PassSelfToSageMaker"
+        Effect = "Allow"
+        Action = [
+          "iam:PassRole"
+        ]
+        Resource = aws_iam_role.ml_engineer.arn
+        Condition = {
+          StringEquals = {
+            "iam:PassedToService" = "sagemaker.amazonaws.com"
+          }
+        }
       }
     ]
   })
