@@ -1,6 +1,19 @@
 # NorthStar Retail AI Platform
 
-CS 401R Labs 1-3 repository for the NorthStar Retail scenario. Lab 3 completes Track A, churn prediction, and Track B, offer generation with RAG.
+NorthStar Retail AI Platform is an AWS-based MLOps project for a simulated retail company, built around the full lifecycle of customer churn prediction and retention-offer generation. It combines cloud infrastructure, data engineering, feature management, model training, model governance, and retrieval-augmented generation into one evolving platform.
+
+The project demonstrates:
+
+- Terraform-managed AWS infrastructure for networking, storage, IAM, and SageMaker.
+- Glue ETL pipelines that clean raw retail transaction data and produce churn-ready customer features.
+- SageMaker Feature Store integration with both online and offline feature access.
+- XGBoost churn modeling with evaluation artifacts, model registry evidence, and reproducible training outputs.
+- Bedrock-powered RAG for generating grounded customer retention offers from policy documents.
+- CI/CD foundations for data tests, feature tests, model quality gates, and SageMaker pipeline automation.
+
+The sections below track the implementation details, verification evidence, and commands used as the platform is built out across phases.
+
+This repository currently covers the platform foundation, data and feature pipeline, churn prediction workflow, and RAG-based retention-offer generation.
 
 ## Lab 3 Tracks
 
