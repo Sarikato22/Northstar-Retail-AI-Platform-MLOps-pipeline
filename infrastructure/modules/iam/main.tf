@@ -57,6 +57,13 @@ resource "aws_iam_policy" "ml_engineer" {
         Resource = "*"
       },
       {
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject"
+        ]
+        Resource = "arn:aws:s3:::${local.data_bucket_name}/artifacts/*"
+      },
+      {
         Sid    = "PassSelfToSageMaker"
         Effect = "Allow"
         Action = [
