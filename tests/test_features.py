@@ -161,6 +161,7 @@ class TestRecencyFeatures:
         empty_txns = pd.DataFrame(columns=[
             "customer_id", "purchase_date", "order_value", "num_items",
             "channel", "product_category",
+        ])
         customer_ids = pd.DataFrame({"customer_id": ["CUST-NODATA"]})
 
         # TODO: Your function should handle customers with no transactions
