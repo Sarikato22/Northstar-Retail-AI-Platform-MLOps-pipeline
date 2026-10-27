@@ -22,6 +22,7 @@ Run locally (after the local training run in the lab handout):
 
 import json
 import os
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -68,6 +69,16 @@ FEATURE_COLUMNS = [
     "category_diversity_score",
     "online_to_store_ratio",
 ]
+
+MODEL_PACKAGE_GROUP = os.environ.get("MODEL_PACKAGE_GROUP", "northstar-churn-models")
+
+
+def _read_eval_metrics():
+    metrics_path = os.environ.get("EVAL_METRICS_PATH", "/tmp/eval_metrics.json")
+    if not Path(metrics_path).exists():
+        pytest.skip(f"Evaluation metrics not found at {metrics_path}.")
+    with open(metrics_path) as f:
+        return json.load(f)
 
 
 @pytest.fixture(scope="module")
@@ -376,11 +387,7 @@ class TestStoredMetricsGate:
 
     @pytest.fixture(scope="class")
     def eval_metrics(self):
-        metrics_path = os.environ.get("EVAL_METRICS_PATH", "/tmp/eval_metrics.json")
-        if not Path(metrics_path).exists():
-            pytest.skip(f"Evaluation metrics not found at {metrics_path}.")
-        with open(metrics_path) as f:
-            return json.load(f)
+        return _read_eval_metrics()
 
     def test_precision_top10_meets_threshold(self, eval_metrics):
         p = eval_metrics.get("precision_top10", 0)
@@ -424,3 +431,47 @@ class TestStoredMetricsGate:
             f"The reference dataset measures 22.0%. Check that your validation "
             f"split is stratified."
         )
+
+
+def test_model_auc_matches_champion():
+    candidate_metrics = _read_eval_metrics()
+    new_auc = candidate_metrics.get("auc_roc")
+    assert new_auc is not None
+
+    try:
+        import boto3
+        sm = boto3.client("sagemaker")
+        s3 = boto3.client("s3")
+        resp = sm.list_model_packages(
+            ModelPackageGroupName=MODEL_PACKAGE_GROUP,
+            ModelApprovalStatus="Approved",
+            SortBy="CreationTime",
+            SortOrder="Descending",
+            MaxResults=1,
+        )
+    except Exception as e:
+        if os.environ.get("ALLOW_MISSING_CHAMPION") == "1":
+            pytest.skip(f"Could not query champion model: {e}")
+        pytest.fail(str(e))
+
+    packages = resp.get("ModelPackageSummaryList", [])
+    if not packages and os.environ.get("ALLOW_MISSING_CHAMPION") == "1":
+        pytest.skip("No Approved champion model package yet")
+    assert packages
+
+    champion = packages[0]
+    desc = sm.describe_model_package(ModelPackageName=champion["ModelPackageArn"])
+    metrics_uri = desc["ModelMetrics"]["ModelQuality"]["Statistics"]["S3Uri"]
+
+    bucket, _, key = metrics_uri[len("s3://"):].partition("/")
+    obj = s3.get_object(Bucket=bucket, Key=key)
+    champion_metrics = json.loads(obj["Body"].read().decode("utf-8"))
+    champ_auc = champion_metrics.get("auc_roc")
+    assert champ_auc is not None
+
+    version = champion.get("ModelPackageVersion")
+    warnings.warn(
+        f"champion v{version} auc={champ_auc:.4f}; candidate auc={new_auc:.4f}",
+        stacklevel=1,
+    )
+    assert new_auc >= champ_auc - 0.02

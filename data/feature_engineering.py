@@ -29,6 +29,12 @@ def _history(transactions: pd.DataFrame, snapshot_date: datetime) -> pd.DataFram
 def compute_recency_features(transactions: pd.DataFrame, snapshot_date: datetime) -> pd.DataFrame:
     cutoff = _cutoff(snapshot_date)
     hist = _history(transactions, snapshot_date)
+    if hist.empty:
+        return pd.DataFrame({
+            "customer_id": pd.Series(dtype=object),
+            "days_since_last_purchase": pd.Series(dtype=float),
+            "customer_tenure_days": pd.Series(dtype=float),
+        })
     grouped = hist.groupby("customer_id")["purchase_date"].agg(["min", "max"]).reset_index()
     grouped["days_since_last_purchase"] = (cutoff - grouped["max"]).dt.days.astype(float)
     grouped["customer_tenure_days"] = (cutoff - grouped["min"]).dt.days.astype(float)
@@ -38,7 +44,9 @@ def compute_recency_features(transactions: pd.DataFrame, snapshot_date: datetime
 def compute_frequency_features(transactions: pd.DataFrame, snapshot_date: datetime) -> pd.DataFrame:
     cutoff = _cutoff(snapshot_date)
     hist = _history(transactions, snapshot_date)
-    out = pd.DataFrame({"customer_id": sorted(hist["customer_id"].dropna().unique())})
+    out = pd.DataFrame({
+        "customer_id": pd.Series(sorted(hist["customer_id"].dropna().unique()), dtype=object)
+    })
 
     for days in (30, 90, 180):
         window = hist[hist["purchase_date"] > cutoff - pd.Timedelta(days=days)]
@@ -53,7 +61,9 @@ def compute_frequency_features(transactions: pd.DataFrame, snapshot_date: dateti
 def compute_monetary_features(transactions: pd.DataFrame, snapshot_date: datetime) -> pd.DataFrame:
     cutoff = _cutoff(snapshot_date)
     hist = _history(transactions, snapshot_date)
-    out = pd.DataFrame({"customer_id": sorted(hist["customer_id"].dropna().unique())})
+    out = pd.DataFrame({
+        "customer_id": pd.Series(sorted(hist["customer_id"].dropna().unique()), dtype=object)
+    })
 
     lifetime = hist.groupby("customer_id").agg(
         avg_order_value=("order_value", "mean"),
@@ -76,7 +86,9 @@ def compute_monetary_features(transactions: pd.DataFrame, snapshot_date: datetim
 
 def compute_behavioral_features(transactions: pd.DataFrame) -> pd.DataFrame:
     df = _prepared(transactions)
-    out = pd.DataFrame({"customer_id": sorted(df["customer_id"].dropna().unique())})
+    out = pd.DataFrame({
+        "customer_id": pd.Series(sorted(df["customer_id"].dropna().unique()), dtype=object)
+    })
 
     known_categories = df[df["product_category"].fillna("unknown") != "unknown"]
     diversity = (

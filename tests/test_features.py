@@ -152,9 +152,15 @@ class TestRecencyFeatures:
             "days_since_last_purchase should never be negative"
         )
 
+    # Customer with no transactions should get a sentinel value (e.g., 999).
+    # TODO: Your function should handle customers with no transactions
+    # Expected behavior: return days_since_last_purchase = 999 (or configurable sentinel)
+    # features = compute_recency_features(empty_txns, SNAPSHOT_DATE, customer_ids)
+    # assert features.iloc[0]["days_since_last_purchase"] == 999
     def test_customer_with_no_transactions_returns_sentinel(self, sample_customers):
-        """Customer with no transactions should get a sentinel value (e.g., 999)."""
-        empty_txns = pd.DataFrame(columns=["customer_id", "purchase_date", "order_value"])
+        empty_txns = pd.DataFrame(columns=[
+            "customer_id", "purchase_date", "order_value", "num_items",
+            "channel", "product_category",
         customer_ids = pd.DataFrame({"customer_id": ["CUST-NODATA"]})
 
         # TODO: Your function should handle customers with no transactions
@@ -162,6 +168,13 @@ class TestRecencyFeatures:
         # features = compute_recency_features(empty_txns, SNAPSHOT_DATE, customer_ids)
         # assert features.iloc[0]["days_since_last_purchase"] == 999
         pass
+        features = build_churn_feature_set(
+            customers=customer_ids,
+            transactions=empty_txns,
+            snapshot_date=SNAPSHOT_DATE,
+        )
+        assert features.iloc[0]["days_since_last_purchase"] == 999
+        assert features.iloc[0]["customer_tenure_days"] == 999
 
 
 # ── Frequency Feature Tests ────────────────────────────────────────────────────
@@ -284,11 +297,9 @@ class TestFullFeatureSet:
         missing = [f for f in self.REQUIRED_FEATURES if f not in features.columns]
         assert not missing, f"Missing features: {missing}"
 
+    # TODO: After filling missing values, no feature should be NaN for customers
+    # who have at least one transaction. Document your null-filling strategy.
     def test_no_null_features_for_known_customers(self, sample_customers, sample_transactions):
-        """
-        TODO: After filling missing values, no feature should be NaN for customers
-        who have at least one transaction. Document your null-filling strategy.
-        """
         features = build_churn_feature_set(
             customers=sample_customers,
             transactions=sample_transactions,
@@ -298,7 +309,7 @@ class TestFullFeatureSet:
         active_customer_ids = sample_transactions["customer_id"].unique()
         active_features = features[features["customer_id"].isin(active_customer_ids)]
         null_counts = active_features[self.REQUIRED_FEATURES].isna().sum()
-        # TODO: Assert null_counts.sum() == 0 (implement after deciding on null strategy)
+        assert null_counts.sum() == 0
 
     def test_output_has_customer_id_column(self, sample_customers, sample_transactions):
         features = build_churn_feature_set(

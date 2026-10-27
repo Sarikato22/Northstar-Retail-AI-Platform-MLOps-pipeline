@@ -39,6 +39,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+from data.feature_engineering import build_churn_feature_set
 
 # ── Configuration ─────────────────────────────────────────────────────────────
 
@@ -300,6 +301,40 @@ class TestFeatures:
     # the wall-clock time your Lab 2 feature job ran, NOT the cutoff T.
     # Consequence: re-run the northstar-dev-feature-engineer Glue job (~90 s)
     # before any session in which you will push, or this test fails the build.
+
+    # Recompute a few features from pre-cutoff data and compare to the pipeline output.
+    def test_no_post_cutoff_features(self, processed_df, features_df):
+        customers = features_df[["customer_id"]].drop_duplicates()
+        recomputed = build_churn_feature_set(
+            customers=customers,
+            transactions=processed_df,
+            snapshot_date=FEATURE_CUTOFF,
+        )
+        check_cols = [
+            "days_since_last_purchase",
+            "customer_tenure_days",
+            "purchase_frequency_30d",
+            "purchase_frequency_90d",
+            "purchase_frequency_180d",
+        ]
+        actual = features_df[["customer_id"] + check_cols].copy()
+        merged = actual.merge(
+            recomputed[["customer_id"] + check_cols],
+            on="customer_id",
+            suffixes=("_actual", "_expected"),
+        )
+        assert len(merged) == len(actual), "Could not recompute every feature row"
+        for col in check_cols:
+            diff = (merged[f"{col}_actual"] - merged[f"{col}_expected"]).abs()
+            assert diff.max() <= 1e-6, f"{col} does not match"
+
+    # The feature job needs to have run recently before the build starts.
+    def test_features_are_fresh(self, features_df):
+        assert "event_time" in features_df.columns
+        event_time = pd.to_datetime(features_df["event_time"], unit="s", utc=True)
+        latest = event_time.max()
+        age = pd.Timestamp.now(tz="UTC") - latest
+        assert age < pd.Timedelta(hours=48), "Feature data is older than 48 hours"
 
 
 # ── Cross-dataset consistency ─────────────────────────────────────────────────
