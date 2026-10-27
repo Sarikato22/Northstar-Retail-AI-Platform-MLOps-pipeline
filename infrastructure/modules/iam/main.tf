@@ -51,6 +51,7 @@ resource "aws_iam_policy" "ml_engineer" {
           "s3:GetObject",
           "s3:ListBucket",
           "sagemaker:CreateTrainingJob",
+          "sagemaker:DescribeTrainingJob",
           "sagemaker:AddTags",
           "sagemaker:ListTags"
         ]
