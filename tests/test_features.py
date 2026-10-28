@@ -70,6 +70,10 @@ pytestmark = pytest.mark.skipif(
 # backwards from here, never from today().
 SNAPSHOT_DATE = datetime(2026, 4, 1)
 
+# Task 2 failure demo. Revert this after the failed pipeline evidence is saved.
+def test_task2_failure_demo():
+    assert False
+
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
 @pytest.fixture
