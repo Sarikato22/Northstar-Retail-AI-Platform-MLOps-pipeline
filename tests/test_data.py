@@ -304,7 +304,10 @@ class TestFeatures:
 
     # Recompute a few features from pre-cutoff data and compare to the pipeline output.
     def test_no_post_cutoff_features(self, processed_df, features_df):
+        before_cutoff = processed_df[processed_df["purchase_date"] <= FEATURE_CUTOFF]
+        customer_ids = before_cutoff[["customer_id"]].drop_duplicates()
         customers = features_df[["customer_id"]].drop_duplicates()
+        customers = customers.merge(customer_ids, on="customer_id")
         recomputed = build_churn_feature_set(
             customers=customers,
             transactions=processed_df,

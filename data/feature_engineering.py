@@ -123,13 +123,11 @@ def build_churn_feature_set(
     ):
         out = out.merge(part, on="customer_id", how="left")
 
+    if "days_since_last_purchase" in out.columns:
+        out["days_since_last_purchase"] = out["days_since_last_purchase"].fillna(999.0)
+    if "customer_tenure_days" in out.columns:
+        out["customer_tenure_days"] = out["customer_tenure_days"].fillna(999.0)
     numeric_cols = [col for col in out.columns if col != "customer_id"]
     out[numeric_cols] = out[numeric_cols].fillna(0.0)
-    if "customer_tenure_days" in out.columns:
-        out["customer_tenure_days"] = out["customer_tenure_days"].replace(0.0, np.nan)
-        out["customer_tenure_days"] = out["customer_tenure_days"].fillna(999.0)
-    if "days_since_last_purchase" in out.columns:
-        out["days_since_last_purchase"] = out["days_since_last_purchase"].replace(0.0, np.nan)
-        out["days_since_last_purchase"] = out["days_since_last_purchase"].fillna(999.0)
 
     return out
