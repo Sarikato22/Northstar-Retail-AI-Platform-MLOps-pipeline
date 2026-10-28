@@ -68,3 +68,43 @@ ALARM	2026-10-27T21:25:44.955000-06:00
 2026-10-27T19:02:45.002000-06:00	Action	Successfully executed action arn:aws:sns:us-east-1:716528268494:northstar-model-approvals
 2026-10-27T19:02:44.953000-06:00	StateUpdate	Alarm updated from ALARM to OK
 2026-10-27T18:56:45.013000-06:00	Action	Successfully executed action arn:aws:sns:us-east-1:716528268494:northstar-model-approvals
+
+===== AFTER REVERT  (2026-10-28T03:38:16Z) =====
+--- pipeline execution: id, status, trigger, commit, start time
+06625f50-492b-40d0-b820-2f5cfe512830	InProgress	Webhook	11f1362db5413716c3c4274f107c7895f211b6ca	2026-10-27T21:27:58.184000-06:00
+0fe4f30a-be38-4001-a82a-bc712bac6e0c	Failed	Webhook	053d10d43c3d3a4071223958bd1e6d6e3376dbc5	2026-10-27T21:27:11.610000-06:00
+025b31e3-64e5-4bb2-8c19-1cabcfe829a3	Failed	Webhook	9b37aa4cbc8c99a820f0908e3a0c375630ef7895	2026-10-27T21:22:55.803000-06:00
+89802575-2a49-4a4a-a9bb-aaca358851e7	InProgress	Webhook	e43a073e956d47f884d4e638512a52993da5b59f	2026-10-27T19:51:56.690000-06:00
+4c68366c-9f67-4b33-8a54-92c71c89bb78	Cancelled	StartPipelineExecution	d62d82362263ae69b584e9fff5d88a2f5ab8a844	2026-10-27T18:56:34.195000-06:00
+--- green CodeBuild build: id, commit, status, phases
+northstar-ci:c723221e-e6d8-46af-b6ca-35c64ca649d3	11f1362db5413716c3c4274f107c7895f211b6ca	SUCCEEDED
+SUBMITTED	SUCCEEDED
+QUEUED	SUCCEEDED
+PROVISIONING	SUCCEEDED
+DOWNLOAD_SOURCE	SUCCEEDED
+INSTALL	SUCCEEDED
+PRE_BUILD	SUCCEEDED
+BUILD	SUCCEEDED
+POST_BUILD	SUCCEEDED
+UPLOAD_ARTIFACTS	SUCCEEDED
+FINALIZING	SUCCEEDED
+COMPLETED	None
+--- newest 5 model packages
+8	PendingManualApproval	2026-10-27T21:35:24.901000-06:00
+7	PendingManualApproval	2026-10-27T19:56:45.879000-06:00
+6	PendingManualApproval	2026-10-27T19:01:01.275000-06:00
+5	Approved	2026-10-27T18:54:55.955000-06:00
+4	PendingManualApproval	2026-10-26T18:16:54.998000-06:00
+--- alarm state
+OK	2026-10-27T21:36:44.952000-06:00
+--- alarm history
+2026-10-27T21:36:45.011000-06:00	Action	Successfully executed action arn:aws:sns:us-east-1:716528268494:northstar-model-approvals
+2026-10-27T21:36:44.952000-06:00	StateUpdate	Alarm updated from ALARM to OK
+2026-10-27T21:25:44.998000-06:00	Action	Successfully executed action arn:aws:sns:us-east-1:716528268494:northstar-model-approvals
+2026-10-27T21:25:44.955000-06:00	StateUpdate	Alarm updated from OK to ALARM
+2026-10-27T19:02:45.002000-06:00	Action	Successfully executed action arn:aws:sns:us-east-1:716528268494:northstar-model-approvals
+2026-10-27T19:02:44.953000-06:00	StateUpdate	Alarm updated from ALARM to OK
+2026-10-27T18:56:45.013000-06:00	Action	Successfully executed action arn:aws:sns:us-east-1:716528268494:northstar-model-approvals
+2026-10-27T18:56:44.954000-06:00	StateUpdate	Alarm updated from OK to ALARM
+--- SNS subscriptions (an ARN, not PendingConfirmation)
+email	arn:aws:sns:us-east-1:716528268494:northstar-model-approvals:7153e936-c12a-4710-b81e-423295e368da
