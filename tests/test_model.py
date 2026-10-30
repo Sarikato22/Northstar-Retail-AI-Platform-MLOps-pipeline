@@ -438,32 +438,27 @@ def test_model_auc_matches_champion():
     new_auc = candidate_metrics.get("auc_roc")
     assert new_auc is not None
 
-    try:
-        import boto3
-        sm = boto3.client("sagemaker")
-        s3 = boto3.client("s3")
-        resp = sm.list_model_packages(
-            ModelPackageGroupName=MODEL_PACKAGE_GROUP,
-            ModelApprovalStatus="Approved",
-            SortBy="CreationTime",
-            SortOrder="Descending",
-            MaxResults=1,
-        )
-    except Exception as e:
-        if os.environ.get("ALLOW_MISSING_CHAMPION") == "1":
-            pytest.skip(f"Could not query champion model: {e}")
-        pytest.fail(str(e))
+    import boto3
+    sm = boto3.client("sagemaker")
+    s3 = boto3.client("s3")
+
+    resp = sm.list_model_packages(
+        ModelPackageGroupName=MODEL_PACKAGE_GROUP,
+        ModelApprovalStatus="Approved",
+        SortBy="CreationTime",
+        SortOrder="Descending",
+        MaxResults=1,
+    )
 
     packages = resp.get("ModelPackageSummaryList", [])
-    if not packages and os.environ.get("ALLOW_MISSING_CHAMPION") == "1":
+    if not packages:
         pytest.skip("No Approved champion model package yet")
-    assert packages
 
     champion = packages[0]
     desc = sm.describe_model_package(ModelPackageName=champion["ModelPackageArn"])
     metrics_uri = desc["ModelMetrics"]["ModelQuality"]["Statistics"]["S3Uri"]
 
-    bucket, _, key = metrics_uri[len("s3://"):].partition("/")
+    bucket, key = metrics_uri.replace("s3://", "").split("/", 1)
     obj = s3.get_object(Bucket=bucket, Key=key)
     champion_metrics = json.loads(obj["Body"].read().decode("utf-8"))
     champ_auc = champion_metrics.get("auc_roc")
