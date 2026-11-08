@@ -1,0 +1,25 @@
+{
+  "AlarmName": "northstar-churn-rollback-model-latency-canary",
+  "AlarmDescription": "Rollback trigger for the Lab 5 canary. ModelLatency is emitted in microseconds; 200 ms is 200000.",
+  "ActionsEnabled": false,
+  "Namespace": "AWS/SageMaker",
+  "MetricName": "ModelLatency",
+  "Dimensions": [
+    {
+      "Name": "EndpointName",
+      "Value": "northstar-churn-prod"
+    },
+    {
+      "Name": "VariantName",
+      "Value": "canary"
+    }
+  ],
+  "Statistic": "Average",
+  "Period": 60,
+  "EvaluationPeriods": 2,
+  "DatapointsToAlarm": 2,
+  "Threshold": 200000,
+  "ComparisonOperator": "GreaterThanThreshold",
+  "TreatMissingData": "notBreaching",
+  "Unit": "Microseconds"
+}

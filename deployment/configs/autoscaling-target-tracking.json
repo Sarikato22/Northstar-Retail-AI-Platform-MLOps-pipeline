@@ -1,0 +1,8 @@
+{
+  "TargetValue": 1000.0,
+  "PredefinedMetricSpecification": {
+    "PredefinedMetricType": "SageMakerVariantInvocationsPerInstance"
+  },
+  "ScaleOutCooldown": 60,
+  "ScaleInCooldown": 600
+}
