@@ -120,6 +120,10 @@ phases:
       #         sys.exit(1)
       #   "
 
+      - echo "Running security scan"
+      - pip install --quiet bandit
+      - bandit -r models data -lll
+
       - echo "All pre-build tests passed ✓"
 
   build:
