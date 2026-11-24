@@ -82,6 +82,15 @@ resource "aws_iam_policy" "ml_engineer" {
             "iam:PassedToService" = "sagemaker.amazonaws.com"
           }
         }
+      },
+      {
+        Sid      = "EndpointInstanceMetrics"
+        Effect   = "Allow"
+        Action   = ["cloudwatch:PutMetricData"]
+        Resource = "*"
+        Condition = {
+          StringEquals = { "cloudwatch:namespace" = "/aws/sagemaker/Endpoints" }
+        }
       }
     ]
   })
@@ -127,6 +136,15 @@ resource "aws_iam_policy" "data_engineer" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid      = "GlueJobMetrics"
+        Effect   = "Allow"
+        Action   = ["cloudwatch:PutMetricData"]
+        Resource = "*"
+        Condition = {
+          StringEquals = { "cloudwatch:namespace" = "Glue" }
+        }
+      },
+      {
         Effect = "Allow"
         Action = [
           "glue:*"
@@ -157,7 +175,9 @@ resource "aws_iam_policy" "data_engineer" {
         Resource = [
           "arn:aws:s3:::${local.data_bucket_name}/raw/*",
           "arn:aws:s3:::${local.data_bucket_name}/processed/*",
-          "arn:aws:s3:::${local.data_bucket_name}/features/*"
+          "arn:aws:s3:::${local.data_bucket_name}/features/*",
+          "arn:aws:s3:::${local.data_bucket_name}/processed_$folder$",
+          "arn:aws:s3:::${local.data_bucket_name}/features_$folder$"
         ]
       },
       {
@@ -326,4 +346,68 @@ resource "aws_iam_policy" "model_monitor" {
 resource "aws_iam_role_policy_attachment" "model_monitor" {
   role       = aws_iam_role.model_monitor.name
   policy_arn = aws_iam_policy.model_monitor.arn
+}
+
+resource "aws_iam_role" "model_monitor_execution" {
+  name               = "${var.project}-${var.environment}-ModelMonitorExecution"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+}
+
+resource "aws_iam_policy" "model_monitor_execution" {
+  name        = "${var.project}-${var.environment}-ModelMonitorExecutionPolicy"
+  description = "Evidently drift job: pull the sklearn image, read datacapture and monitoring, write monitoring reports"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "ECRPullProcessingImage"
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchGetImage"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid      = "S3BucketList"
+        Effect   = "Allow"
+        Action   = ["s3:ListBucket", "s3:GetBucketLocation"]
+        Resource = "arn:aws:s3:::${local.data_bucket_name}"
+      },
+      {
+        Sid    = "ReadCaptureBaselineAndCode"
+        Effect = "Allow"
+        Action = ["s3:GetObject"]
+        Resource = [
+          "arn:aws:s3:::${local.data_bucket_name}/datacapture/*",
+          "arn:aws:s3:::${local.data_bucket_name}/monitoring/*"
+        ]
+      },
+      {
+        Sid      = "WriteMonitoringReports"
+        Effect   = "Allow"
+        Action   = ["s3:PutObject", "s3:AbortMultipartUpload"]
+        Resource = "arn:aws:s3:::${local.data_bucket_name}/monitoring/*"
+      },
+      {
+        Sid    = "CloudWatchLogs"
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogStreams"
+        ]
+        Resource = "arn:aws:logs:*:*:log-group:/aws/sagemaker/*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "model_monitor_execution" {
+  role       = aws_iam_role.model_monitor_execution.name
+  policy_arn = aws_iam_policy.model_monitor_execution.arn
 }

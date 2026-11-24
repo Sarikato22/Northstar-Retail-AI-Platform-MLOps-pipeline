@@ -22,6 +22,11 @@ output "ml_engineer_role_arn" {
   value       = module.iam.ml_engineer_role_arn
 }
 
+output "model_monitor_execution_role_arn" {
+  description = "Execution role for Lab 6 Evidently processing jobs"
+  value       = module.iam.model_monitor_execution_role_arn
+}
+
 output "sagemaker_domain_id" {
   description = "ID of the SageMaker Domain"
   value       = module.sagemaker.domain_id
