@@ -91,6 +91,24 @@ resource "aws_iam_policy" "ml_engineer" {
         Condition = {
           StringEquals = { "cloudwatch:namespace" = "/aws/sagemaker/Endpoints" }
         }
+      },
+      {
+        Sid      = "SageMakerContainerPull"
+        Effect   = "Allow"
+        Action   = ["ecr:GetAuthorizationToken", "ecr:BatchCheckLayerAvailability", "ecr:GetDownloadUrlForLayer", "ecr:BatchGetImage"]
+        Resource = "*"
+      },
+      {
+        Sid      = "SageMakerJobAndEndpointLogs"
+        Effect   = "Allow"
+        Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents", "logs:DescribeLogStreams"]
+        Resource = "arn:aws:logs:*:*:log-group:/aws/sagemaker/*"
+      },
+      {
+        Sid      = "EndpointDataCapture"
+        Effect   = "Allow"
+        Action   = ["s3:PutObject", "s3:AbortMultipartUpload"]
+        Resource = "arn:aws:s3:::${local.data_bucket_name}/datacapture/*"
       }
     ]
   })
