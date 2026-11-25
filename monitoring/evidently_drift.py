@@ -56,9 +56,6 @@ import sys
 
 import pandas as pd
 
-from evidently import Dataset, DataDefinition, Report
-from evidently.metrics import ValueDrift, DriftedColumnsCount
-
 # The 11 features the ENDPOINT receives, in payload order. This must match
 # FEATURE_COLUMNS in the training skeleton. It is deliberately NOT the full
 # training frame: churn_label is the target and churn_risk_score is the Lab 3
@@ -86,7 +83,7 @@ FEATURE_COLUMNS = [
 DRIFT_PLAN = {
     "days_since_last_purchase": ("psi", 0.2),
     "purchase_frequency_30d":   ("psi", 0.2),
-    "avg_order_value":          ("psi", 0.2),
+    "purchase_frequency_180d": ("psi", 0.2),
     "category_diversity_score": ("ks", 0.05),
     "total_spend_90d":          ("ks", 0.05),
 }
@@ -97,25 +94,14 @@ OUT = "/opt/ml/processing/output"
 
 
 def drift_direction(method: str, value: float, threshold: float) -> bool:
-    """Return True if this value means DRIFT, respecting each test's semantics.
-
-    TODO (Lab 6 Task 1): implement this function.
-
-    `method` is the Evidently test name from DRIFT_PLAN ("psi", "ks", ...),
-    `value` is the number Evidently returned for that feature, and `threshold`
-    is the threshold from DRIFT_PLAN. Return True when the feature has drifted.
-
-    Read "THE TRAP THAT WILL GET YOU" at the top of this file before you write
-    it. Your implementation must handle every test you put in DRIFT_PLAN.
-    Test it locally on the synthetic numbers in that table before you spend
-    money on a processing job.
-
-    run_evidently_job.py refuses to launch while this function still raises
-    NotImplementedError.
-    """
-    raise NotImplementedError(
-        "drift_direction() is not implemented -- see the TODO in "
-        "monitoring/evidently_drift.py")
+    """PSI/JSD are distances; KS returns a p-value. Equality is not drift."""
+    if pd.isna(value):
+        raise ValueError("A missing drift statistic cannot establish health")
+    if method in {"psi", "jensenshannon", "jsd"}:
+        return value > threshold
+    if method == "ks":
+        return value < threshold
+    raise ValueError(f"Unsupported drift test: {method}")
 
 
 def load_baseline(path: str) -> pd.DataFrame:
@@ -201,6 +187,9 @@ def load_capture(path: str) -> pd.DataFrame:
 
 
 def main() -> int:
+    from evidently import Dataset, DataDefinition, Report
+    from evidently.metrics import ValueDrift, DriftedColumnsCount
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--min-records", type=int, default=500,
                     help="Refuse to report drift on a window smaller than this. "
