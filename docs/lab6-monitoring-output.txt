@@ -1,6 +1,6 @@
 Lab 6 monitoring evidence - account 716528268494, region us-east-1
 
-===== 1. Endpoint, variants, data capture (2026-11-25T01:59:39.135525+00:00) =====
+===== 1. Endpoint, variants, data capture (2026-11-25T02:14:32.968164+00:00) =====
 {
   "EndpointName": "northstar-churn-prod",
   "EndpointArn": "arn:aws:sagemaker:us-east-1:716528268494:endpoint/northstar-churn-prod",
@@ -49,7 +49,7 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
   }
 }
 
-===== 2. Captured objects per variant (2026-11-25T01:59:39.591607+00:00) =====
+===== 2. Captured objects per variant (2026-11-25T02:14:33.545771+00:00) =====
 {
   "champion": {
     "count": 2,
@@ -96,7 +96,7 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
   }
 }
 
-===== 3. Baseline in S3 (2026-11-25T01:59:39.663427+00:00) =====
+===== 3. Baseline in S3 (2026-11-25T02:14:33.620807+00:00) =====
 [
   {
     "Key": "monitoring/baseline/baseline.csv",
@@ -111,7 +111,7 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
   }
 ]
 
-===== 4. Drift jobs (2026-11-25T01:59:39.900807+00:00) =====
+===== 4. Drift jobs (2026-11-25T02:14:33.870262+00:00) =====
 [
   {
     "ProcessingInputs": [
@@ -267,19 +267,19 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
   }
 ]
 
-===== 5. Business layer: custom metric (2026-11-25T01:59:40.144494+00:00) =====
+===== 5. Business layer: custom metric (2026-11-25T02:14:34.189393+00:00) =====
 {
   "Label": "ChurnAlertVolume",
   "Datapoints": [
     {
-      "Timestamp": "2026-11-24 17:59:00-07:00",
+      "Timestamp": "2026-11-24 18:14:00-07:00",
       "Maximum": 274.0,
       "Unit": "Count"
     }
   ]
 }
 
-===== 6. Model layer: drift metric (2026-11-25T01:59:40.221087+00:00) =====
+===== 6. Model layer: drift metric (2026-11-25T02:14:34.269063+00:00) =====
 {
   "Label": "DriftDetected",
   "Datapoints": [
@@ -287,11 +287,16 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
       "Timestamp": "2026-11-24 18:49:00-07:00",
       "Maximum": 0.0,
       "Unit": "Count"
+    },
+    {
+      "Timestamp": "2026-11-24 18:59:00-07:00",
+      "Maximum": 0.0,
+      "Unit": "Count"
     }
   ]
 }
 
-===== 7. Pipeline layer: Glue job runs and state-event metrics (2026-11-25T01:59:40.940869+00:00) =====
+===== 7. Pipeline layer: Glue job runs and state-event metrics (2026-11-25T02:14:34.947016+00:00) =====
 {
   "northstar-dev-transform": [
     {
@@ -398,13 +403,13 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
       }
     ],
     "ResponseMetadata": {
-      "RequestId": "faf0c436-6b3a-4647-82a7-830e4f8e72f2",
+      "RequestId": "ca0ab7e7-431c-4888-a781-fde41b72b7c4",
       "HTTPStatusCode": 200,
       "HTTPHeaders": {
-        "x-amzn-requestid": "faf0c436-6b3a-4647-82a7-830e4f8e72f2",
+        "x-amzn-requestid": "ca0ab7e7-431c-4888-a781-fde41b72b7c4",
         "content-type": "application/x-amz-json-1.0",
         "content-length": "143",
-        "date": "Wed, 25 Nov 2026 01:59:37 GMT"
+        "date": "Wed, 25 Nov 2026 02:14:31 GMT"
       },
       "RetryAttempts": 0
     }
@@ -424,13 +429,13 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
       }
     ],
     "ResponseMetadata": {
-      "RequestId": "08d2de1c-759f-48e6-a5b8-9e6507dfff2d",
+      "RequestId": "121b6266-bdf9-4e4f-add3-ac9d9f41a8d1",
       "HTTPStatusCode": 200,
       "HTTPHeaders": {
-        "x-amzn-requestid": "08d2de1c-759f-48e6-a5b8-9e6507dfff2d",
+        "x-amzn-requestid": "121b6266-bdf9-4e4f-add3-ac9d9f41a8d1",
         "content-type": "application/x-amz-json-1.0",
         "content-length": "140",
-        "date": "Wed, 25 Nov 2026 01:59:37 GMT"
+        "date": "Wed, 25 Nov 2026 02:14:31 GMT"
       },
       "RetryAttempts": 0
     }
@@ -438,15 +443,15 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
   "glue_driver_metrics_available": [
     {
       "Namespace": "Glue",
-      "MetricName": "glue.ALL.s3.filesystem.read_bytes",
+      "MetricName": "glue.driver.aggregate.bytesRead",
       "Dimensions": [
         {
           "Name": "Type",
-          "Value": "gauge"
+          "Value": "count"
         },
         {
           "Name": "JobRunId",
-          "Value": "ALL"
+          "Value": "jr_3e3e63382bfd79aae2f5ca3d393ea683de846ab6aa4aa20f9a002de987fadc6b"
         },
         {
           "Name": "JobName",
@@ -456,15 +461,15 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
     },
     {
       "Namespace": "Glue",
-      "MetricName": "glue.ALL.s3.filesystem.write_bytes",
+      "MetricName": "glue.driver.aggregate.numCompletedTasks",
       "Dimensions": [
         {
           "Name": "Type",
-          "Value": "gauge"
+          "Value": "count"
         },
         {
           "Name": "JobRunId",
-          "Value": "jr_85a28caf4f0c4c5f3909a60171061715e6a5221ee825c4a887f6cf0d5b3f0464"
+          "Value": "jr_3e3e63382bfd79aae2f5ca3d393ea683de846ab6aa4aa20f9a002de987fadc6b"
         },
         {
           "Name": "JobName",
@@ -474,15 +479,15 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
     },
     {
       "Namespace": "Glue",
-      "MetricName": "glue.ALL.jvm.heap.usage",
+      "MetricName": "glue.driver.aggregate.numFailedTasks",
       "Dimensions": [
         {
           "Name": "Type",
-          "Value": "gauge"
+          "Value": "count"
         },
         {
           "Name": "JobRunId",
-          "Value": "jr_85a28caf4f0c4c5f3909a60171061715e6a5221ee825c4a887f6cf0d5b3f0464"
+          "Value": "jr_3e3e63382bfd79aae2f5ca3d393ea683de846ab6aa4aa20f9a002de987fadc6b"
         },
         {
           "Name": "JobName",
@@ -492,7 +497,7 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
     },
     {
       "Namespace": "Glue",
-      "MetricName": "glue.ALL.s3.filesystem.read_bytes",
+      "MetricName": "glue.driver.system.cpuSystemLoad",
       "Dimensions": [
         {
           "Name": "Type",
@@ -500,7 +505,7 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
         },
         {
           "Name": "JobRunId",
-          "Value": "jr_85a28caf4f0c4c5f3909a60171061715e6a5221ee825c4a887f6cf0d5b3f0464"
+          "Value": "jr_3e3e63382bfd79aae2f5ca3d393ea683de846ab6aa4aa20f9a002de987fadc6b"
         },
         {
           "Name": "JobName",
@@ -510,15 +515,15 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
     },
     {
       "Namespace": "Glue",
-      "MetricName": "glue.1.s3.filesystem.read_bytes",
+      "MetricName": "glue.driver.aggregate.shuffleBytesWritten",
       "Dimensions": [
         {
           "Name": "Type",
-          "Value": "gauge"
+          "Value": "count"
         },
         {
           "Name": "JobRunId",
-          "Value": "jr_85a28caf4f0c4c5f3909a60171061715e6a5221ee825c4a887f6cf0d5b3f0464"
+          "Value": "jr_3e3e63382bfd79aae2f5ca3d393ea683de846ab6aa4aa20f9a002de987fadc6b"
         },
         {
           "Name": "JobName",
@@ -528,7 +533,7 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
     },
     {
       "Namespace": "Glue",
-      "MetricName": "glue.1.jvm.heap.usage",
+      "MetricName": "glue.driver.jvm.heap.usage",
       "Dimensions": [
         {
           "Name": "Type",
@@ -536,7 +541,7 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
         },
         {
           "Name": "JobRunId",
-          "Value": "jr_85a28caf4f0c4c5f3909a60171061715e6a5221ee825c4a887f6cf0d5b3f0464"
+          "Value": "jr_3e3e63382bfd79aae2f5ca3d393ea683de846ab6aa4aa20f9a002de987fadc6b"
         },
         {
           "Name": "JobName",
@@ -546,15 +551,15 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
     },
     {
       "Namespace": "Glue",
-      "MetricName": "glue.1.s3.filesystem.read_bytes",
+      "MetricName": "glue.driver.aggregate.numCompletedStages",
       "Dimensions": [
         {
           "Name": "Type",
-          "Value": "gauge"
+          "Value": "count"
         },
         {
           "Name": "JobRunId",
-          "Value": "ALL"
+          "Value": "jr_3e3e63382bfd79aae2f5ca3d393ea683de846ab6aa4aa20f9a002de987fadc6b"
         },
         {
           "Name": "JobName",
@@ -564,7 +569,7 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
     },
     {
       "Namespace": "Glue",
-      "MetricName": "glue.1.s3.filesystem.write_bytes",
+      "MetricName": "glue.driver.s3.filesystem.read_bytes",
       "Dimensions": [
         {
           "Name": "Type",
@@ -572,7 +577,7 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
         },
         {
           "Name": "JobRunId",
-          "Value": "ALL"
+          "Value": "jr_3e3e63382bfd79aae2f5ca3d393ea683de846ab6aa4aa20f9a002de987fadc6b"
         },
         {
           "Name": "JobName",
@@ -582,15 +587,15 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
     },
     {
       "Namespace": "Glue",
-      "MetricName": "glue.ALL.jvm.heap.used",
+      "MetricName": "glue.driver.aggregate.recordsRead",
       "Dimensions": [
         {
           "Name": "Type",
-          "Value": "gauge"
+          "Value": "count"
         },
         {
           "Name": "JobRunId",
-          "Value": "jr_85a28caf4f0c4c5f3909a60171061715e6a5221ee825c4a887f6cf0d5b3f0464"
+          "Value": "jr_3e3e63382bfd79aae2f5ca3d393ea683de846ab6aa4aa20f9a002de987fadc6b"
         },
         {
           "Name": "JobName",
@@ -600,15 +605,15 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
     },
     {
       "Namespace": "Glue",
-      "MetricName": "glue.1.system.cpuSystemLoad",
+      "MetricName": "glue.driver.aggregate.jvmGCTime",
       "Dimensions": [
         {
           "Name": "Type",
-          "Value": "gauge"
+          "Value": "count"
         },
         {
           "Name": "JobRunId",
-          "Value": "ALL"
+          "Value": "jr_3e3e63382bfd79aae2f5ca3d393ea683de846ab6aa4aa20f9a002de987fadc6b"
         },
         {
           "Name": "JobName",
@@ -619,12 +624,12 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
   ]
 }
 
-===== 8. Application layer: champion latency in MICROSECONDS (2026-11-25T01:59:41.019325+00:00) =====
+===== 8. Application layer: champion latency in MICROSECONDS (2026-11-25T02:14:35.018047+00:00) =====
 {
   "Label": "ModelLatency",
   "Datapoints": [
     {
-      "Timestamp": "2026-11-24 16:59:00-07:00",
+      "Timestamp": "2026-11-24 16:14:00-07:00",
       "Unit": "Microseconds",
       "ExtendedStatistics": {
         "p99": 22620.93118831537,
@@ -633,7 +638,7 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
       }
     },
     {
-      "Timestamp": "2026-11-24 17:59:00-07:00",
+      "Timestamp": "2026-11-24 18:14:00-07:00",
       "Unit": "Microseconds",
       "ExtendedStatistics": {
         "p99": 12136.075482089487,
@@ -644,7 +649,7 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
   ]
 }
 
-===== 9. Infrastructure layer: champion CPU and memory (2026-11-25T01:59:41.184491+00:00) =====
+===== 9. Infrastructure layer: champion CPU and memory (2026-11-25T02:14:35.169108+00:00) =====
 {
   "CPUUtilization": {
     "Label": "CPUUtilization",
@@ -768,16 +773,31 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
         "Timestamp": "2026-11-24 18:54:00-07:00",
         "Average": 0.06335801239810304,
         "Unit": "Percent"
+      },
+      {
+        "Timestamp": "2026-11-24 18:59:00-07:00",
+        "Average": 0.06315424835656683,
+        "Unit": "Percent"
+      },
+      {
+        "Timestamp": "2026-11-24 19:04:00-07:00",
+        "Average": 0.06383033182529407,
+        "Unit": "Percent"
+      },
+      {
+        "Timestamp": "2026-11-24 19:09:00-07:00",
+        "Average": 0.06374413860992299,
+        "Unit": "Percent"
       }
     ],
     "ResponseMetadata": {
-      "RequestId": "2ba40f3e-3d9c-4253-bd05-3043fe08b155",
+      "RequestId": "3d59a059-e0f2-494c-98b4-a4673ac4b7f2",
       "HTTPStatusCode": 200,
       "HTTPHeaders": {
-        "x-amzn-requestid": "2ba40f3e-3d9c-4253-bd05-3043fe08b155",
+        "x-amzn-requestid": "3d59a059-e0f2-494c-98b4-a4673ac4b7f2",
         "content-type": "application/x-amz-json-1.0",
-        "content-length": "1815",
-        "date": "Wed, 25 Nov 2026 01:59:38 GMT"
+        "content-length": "2037",
+        "date": "Wed, 25 Nov 2026 02:14:32 GMT"
       },
       "RetryAttempts": 0
     }
@@ -904,23 +924,38 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
         "Timestamp": "2026-11-24 18:54:00-07:00",
         "Average": 9.886561609122584,
         "Unit": "Percent"
+      },
+      {
+        "Timestamp": "2026-11-24 18:59:00-07:00",
+        "Average": 9.886264649984161,
+        "Unit": "Percent"
+      },
+      {
+        "Timestamp": "2026-11-24 19:04:00-07:00",
+        "Average": 9.886264649984161,
+        "Unit": "Percent"
+      },
+      {
+        "Timestamp": "2026-11-24 19:09:00-07:00",
+        "Average": 9.886264649984161,
+        "Unit": "Percent"
       }
     ],
     "ResponseMetadata": {
-      "RequestId": "1ea139cb-7a31-412e-844f-fcfc432b05f5",
+      "RequestId": "319ccb70-e706-4ff3-b50e-e3926dcf046f",
       "HTTPStatusCode": 200,
       "HTTPHeaders": {
-        "x-amzn-requestid": "1ea139cb-7a31-412e-844f-fcfc432b05f5",
+        "x-amzn-requestid": "319ccb70-e706-4ff3-b50e-e3926dcf046f",
         "content-type": "application/x-amz-json-1.0",
-        "content-length": "1772",
-        "date": "Wed, 25 Nov 2026 01:59:38 GMT"
+        "content-length": "1988",
+        "date": "Wed, 25 Nov 2026 02:14:32 GMT"
       },
       "RetryAttempts": 0
     }
   }
 }
 
-===== 10. Alarms: threshold and state (2026-11-25T01:59:41.295468+00:00) =====
+===== 10. Alarms: threshold and state (2026-11-25T02:14:35.269393+00:00) =====
 [
   {
     "AlarmName": "northstar-application-latency",
@@ -1123,10 +1158,10 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
     "OKActions": [],
     "AlarmActions": [],
     "InsufficientDataActions": [],
-    "StateValue": "ALARM",
-    "StateReason": "Threshold Crossed: 1 datapoint [1.0 (25/11/26 01:42:00)] was greater than the threshold (0.0).",
-    "StateReasonData": "{\"version\":\"1.0\",\"queryDate\":\"2026-11-25T01:47:49.973+0000\",\"startDate\":\"2026-11-25T01:42:00.000+0000\",\"statistic\":\"Sum\",\"period\":300,\"recentDatapoints\":[1.0],\"threshold\":0.0,\"evaluatedDatapoints\":[{\"timestamp\":\"2026-11-25T01:42:00.000+0000\",\"sampleCount\":1.0,\"value\":1.0}]}",
-    "StateUpdatedTimestamp": "2026-11-24 18:47:49.976000-07:00",
+    "StateValue": "OK",
+    "StateReason": "Threshold Crossed: no datapoints were received for 1 period and 1 missing datapoint was treated as [NonBreaching].",
+    "StateReasonData": "{\"version\":\"1.0\",\"queryDate\":\"2026-11-25T02:06:49.974+0000\",\"statistic\":\"Sum\",\"period\":300,\"recentDatapoints\":[],\"threshold\":0.0,\"evaluatedDatapoints\":[{\"timestamp\":\"2026-11-25T02:01:00.000+0000\"}]}",
+    "StateUpdatedTimestamp": "2026-11-24 19:06:49.977000-07:00",
     "MetricName": "JobFailed",
     "Namespace": "NorthStar/Pipeline",
     "Statistic": "Sum",
@@ -1136,11 +1171,11 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
     "Threshold": 0.0,
     "ComparisonOperator": "GreaterThanThreshold",
     "TreatMissingData": "notBreaching",
-    "StateTransitionedTimestamp": "2026-11-24 18:47:49.976000-07:00"
+    "StateTransitionedTimestamp": "2026-11-24 19:06:49.977000-07:00"
   }
 ]
 
-===== 11. Dashboard (2026-11-25T01:59:41.400555+00:00) =====
+===== 11. Dashboard (2026-11-25T02:14:35.371638+00:00) =====
 {
   "DashboardArn": "arn:aws:cloudwatch::716528268494:dashboard/NorthStar-AI-Platform",
   "DashboardBody": {
@@ -1339,4 +1374,11 @@ Lab 6 monitoring evidence - account 716528268494, region us-east-1
     ]
   },
   "DashboardName": "NorthStar-AI-Platform"
+}
+
+===== 12. After teardown: live API (2026-11-25T02:18:15.744801+00:00) =====
+{
+  "endpoints": 0,
+  "running_processing_jobs": 0,
+  "northstar_alarms": 0
 }

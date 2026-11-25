@@ -1,0 +1,134 @@
+[
+  {
+    "ComparisonOperator": "GreaterThanThreshold",
+    "TreatMissingData": "missing",
+    "ActionsEnabled": false,
+    "Period": 300,
+    "EvaluationPeriods": 3,
+    "AlarmName": "northstar-infrastructure-cpu",
+    "AlarmDescription": "Task 1: CPU per-core sum >80% (40% total on two vCPUs), 3 of 3 five-minute periods",
+    "Namespace": "/aws/sagemaker/Endpoints",
+    "MetricName": "CPUUtilization",
+    "Dimensions": [
+      {
+        "Name": "EndpointName",
+        "Value": "northstar-churn-prod"
+      },
+      {
+        "Name": "VariantName",
+        "Value": "champion"
+      }
+    ],
+    "Statistic": "Average",
+    "Threshold": 80,
+    "DatapointsToAlarm": 3
+  },
+  {
+    "ComparisonOperator": "GreaterThanThreshold",
+    "TreatMissingData": "notBreaching",
+    "ActionsEnabled": false,
+    "Period": 300,
+    "EvaluationPeriods": 1,
+    "AlarmName": "northstar-pipeline-failure",
+    "AlarmDescription": "P3: any Glue FAILED/ERROR/TIMEOUT state event",
+    "Namespace": "NorthStar/Pipeline",
+    "MetricName": "JobFailed",
+    "Statistic": "Sum",
+    "Threshold": 0
+  },
+  {
+    "ComparisonOperator": "GreaterThanThreshold",
+    "TreatMissingData": "missing",
+    "ActionsEnabled": false,
+    "Period": 300,
+    "EvaluationPeriods": 1,
+    "AlarmName": "northstar-model-drift",
+    "AlarmDescription": "Any planned PSI or KS feature test detects drift",
+    "Namespace": "NorthStar/ChurnModel",
+    "MetricName": "DriftDetected",
+    "Dimensions": [
+      {
+        "Name": "EndpointName",
+        "Value": "northstar-churn-prod"
+      }
+    ],
+    "Statistic": "Maximum",
+    "Threshold": 0
+  },
+  {
+    "ComparisonOperator": "GreaterThanThreshold",
+    "TreatMissingData": "missing",
+    "ActionsEnabled": false,
+    "Period": 60,
+    "EvaluationPeriods": 2,
+    "AlarmName": "northstar-application-latency",
+    "AlarmDescription": "Champion p95 ModelLatency >200 ms (200000 microseconds), two consecutive minutes",
+    "Namespace": "AWS/SageMaker",
+    "MetricName": "ModelLatency",
+    "Dimensions": [
+      {
+        "Name": "EndpointName",
+        "Value": "northstar-churn-prod"
+      },
+      {
+        "Name": "VariantName",
+        "Value": "champion"
+      }
+    ],
+    "ExtendedStatistic": "p95",
+    "Threshold": 200000
+  },
+  {
+    "AlarmName": "northstar-business-volume-drop",
+    "AlarmDescription": "Daily churn-alert proxy <70% of previous seven observed daily snapshots; insufficient data until history exists",
+    "ActionsEnabled": false,
+    "EvaluationPeriods": 1,
+    "Threshold": 70,
+    "ComparisonOperator": "LessThanThreshold",
+    "TreatMissingData": "missing",
+    "Metrics": [
+      {
+        "Id": "volume",
+        "ReturnData": false,
+        "MetricStat": {
+          "Metric": {
+            "Namespace": "NorthStar/ChurnModel",
+            "MetricName": "ChurnAlertVolume",
+            "Dimensions": [
+              {
+                "Name": "EndpointName",
+                "Value": "northstar-churn-prod"
+              }
+            ]
+          },
+          "Period": 86400,
+          "Stat": "Maximum"
+        }
+      },
+      {
+        "Id": "baseline",
+        "ReturnData": false,
+        "MetricStat": {
+          "Metric": {
+            "Namespace": "NorthStar/ChurnModel",
+            "MetricName": "ChurnAlertVolume7DayAverage",
+            "Dimensions": [
+              {
+                "Name": "EndpointName",
+                "Value": "northstar-churn-prod"
+              }
+            ]
+          },
+          "Period": 86400,
+          "Stat": "Maximum"
+        }
+      },
+      {
+        "Id": "ratio",
+        "Expression": "IF(baseline>0,100*volume/baseline)",
+        "Label": "Percent of previous seven-day average",
+        "ReturnData": true
+      }
+    ]
+  }
+]
