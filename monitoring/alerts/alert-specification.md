@@ -6,8 +6,7 @@ production notification integrations were deployed.
 
 ## Alert definitions
 
-I chose six alerts across P1–P4. All alert names include `northstar` so they
-can be identified during discovery and teardown.
+I chose six alerts across P1–P4. 
 
 | Alert name | Tier | Trigger | Responsible owner |
 |---|---|---|---|
