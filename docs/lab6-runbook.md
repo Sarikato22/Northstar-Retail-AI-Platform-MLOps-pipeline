@@ -22,9 +22,6 @@ For comparison, I chose the captured inference inputs from the champion variant 
 | `category_diversity_score` | KS | Frozen Lab 2 reference snapshot | p-value < 0.05 |
 | `total_spend_90d` | KS | Frozen Lab 2 reference snapshot | p-value < 0.05 |
 
-I used PSI to measure changes in recency and purchase frequency, and KS to check for changes in category diversity and spending. I would flag drift if PSI goes above 0.20 or if the KS p-value falls below 0.05.
-
-I would keep these tests and thresholds consistent with `DRIFT_PLAN` in `monitoring/evidently_drift.py`. If a threshold were reached, I would first look into possible data quality issues or business changes before deciding whether retraining is needed.
 
 ### 3. Concept drift detection
 
@@ -38,7 +35,7 @@ There would be a seven-day waiting period after the offer is delivered, plus add
 
 ## Task 4: SLO Design
 
-I would measure the request SLOs over a rolling 30-day window. I am considering a ficticious traffic of 1000,000 requests per month as an example. For quality and fairness, I would require every valid weekly evaluation to pass, giving each a zero-failure budget.
+I would measure the request SLOs over a rolling 30-day window. I am considering a hypothetical traffic of 100,000 requests per month as an example. For quality and fairness, I would require every valid weekly evaluation to pass, giving each a zero-failure budget.
 
 | SLO | Target | SLI (Good Events / Total Events) | Error Budget | Deployment Freeze Trigger |
 |---|---|---|---|---|
@@ -51,11 +48,11 @@ I would measure the request SLOs over a rolling 30-day window. I am considering 
 ## Runbook: Data Drift on days_since_last_purchase
  
 ### Detection
-- Alert: `northstar-model-drift` (P3) fires on a valid analysis with at least 500 captured records where PSI > 0.20 for `days_since_last_purchase`.
-- Confirm in `drift_violations.json`: `captured_records` >= 500, `underpowered_window` is false, and the PSI value is above 0.20.
+- Alert: `northstar-model-drift` (P3) fires when a valid analysis with at least 500 captured records breaches the threshold on any monitored feature, so the alert alone does not say which one.
+- This runbook applies when `drift_violations.json` lists `days_since_last_purchase` with PSI > 0.20. Also confirm `captured_records` >= 500 and `underpowered_window` is false.
 - Secondary signals: `purchase_frequency_30d` or `purchase_frequency_180d` also flagged, a holiday promotion or catalog change in the last few days, or a falling retention-offer redemption rate among the top 10% risk customers.
 ### Triage (< 5 minutes)
-- Step 1: Download the latest `drift_violations.json` from `s3://<bucket>/monitoring/reports/<job>/` and record the job name, record count, and PSI in the ticket.
+- Step 1: Download the latest `drift_violations.json` from `s3://<bucket>/monitoring/reports/<job>/`, confirm which features were flagged, and record the job name, record count, and PSI in the ticket. If `days_since_last_purchase` is not flagged, handle the incident under the flagged feature's test and threshold instead.
 - Step 2: Check the job output for the duplicate-payload line from `load_capture`. If many rows were dropped, test traffic may be distorting the window.
 - Step 3: Check the last three runs of `northstar-dev-transform` and `northstar-dev-feature-engineer` for failures or changed row counts.
 - Step 4: Ask the campaign owner whether a promotion or catalog change started around when drift first appeared.
@@ -70,16 +67,17 @@ I would measure the request SLOs over a rolling 30-day window. I am considering 
 ### Resolution Verification
 - Run a new drift job on at least 500 distinct records captured after the fix.
 - `days_since_last_purchase` PSI must be <= 0.20 and all other monitored features must pass their tests.
-- After the publisher runs, `DriftDetected` must be 0 and `northstar-model-drift` must be in `OK`. A failed job or missing data is not recovery, and a stale result would raise `northstar-monitoring-stale`.
+- After the publisher runs, `DriftDetected` must be 0, which means every monitored feature passes, and `northstar-model-drift` must be in `OK`. A failed job or missing data is not recovery, and a stale result would raise `northstar-monitoring-stale`.
 ### Post-Incident Actions
 - Within 24 hours: attach the before and after reports to the ticket, record the root cause, and decide with the ML owner whether to retrain or review the baseline.
 - Postmortem required: yes if incorrect offers reached customers, a campaign was missed, or the same cause recurs within 30 days. Otherwise close the ticket with the notes above.
 ## Runbook: Inference Latency Spike
  
 ### Detection
-- Alert: `northstar-application-latency` (P2) is in ALARM and `ModelLatency` p95 has stayed above 500000 microseconds (500 ms) for more than 5 minutes (6 consecutive 1-minute periods), with at least 20 invocations per minute.
+- `northstar-application-latency` (P2) fires at `ModelLatency` p95 > 200000 microseconds (200 ms) for two consecutive 1-minute periods, with at least 20 invocations per period. That alarm starts the investigation.
+- This runbook applies when p95 stays above 500000 microseconds (500 ms) for more than 5 minutes (6 consecutive 1-minute periods), with at least 20 invocations per minute.
 - Secondary signals: rising `Invocation5XXErrors`, `CPUUtilization` or `MemoryUtilization` climbing on the same variant, and caller timeouts or retries.
-- Ignore the first few minutes after a deploy. Cold start runs about 6x slower (~24,000 microseconds) and is not an incident.
+- A slow first minute right after a deploy is expected. Cold start runs about 6x slower (~24,000 microseconds) and is not a spike on its own, but those requests still count against the 20 ms SLO error budget.
 ### Triage (< 5 minutes)
 - Step 1: Pull `ModelLatency` p95 for champion and canary separately and note which variant is slow, or whether both are.
 - Step 2: Run `describe-endpoint` and check the status and when the config last changed. Note any traffic weight change in the last 30 minutes.
@@ -89,13 +87,14 @@ I would measure the request SLOs over a rolling 30-day window. I am considering 
 - Option A: Roll back. Choose this when the spike started with a deploy. If only canary is slow, set canary weight to 0 so champion takes all traffic. If both are slow after a config change, switch back to the previous endpoint config. Weight 0 does not stop billing, so delete the canary variant once the incident is closed.
 - Option B: Graceful degradation. Choose this when neither variant can serve current load. Pause nonessential scoring and retry loops, defer the retention campaign, and keep pending requests so they can be replayed after recovery. Send a generic offer or use manual review for time-sensitive customers. Do not return default or made-up churn scores.
 ### Escalation
-- Trigger for escalating beyond on-call: p95 is still above 500000 microseconds 15 minutes after containment, or `northstar-endpoint-unavailable` fires (5XX rate above 5% for two consecutive 5-minute periods), which is P1.
+- Trigger for escalating beyond on-call: p95 is still above 500000 microseconds 15 minutes after containment, or `northstar-endpoint-unavailable` fires, which is P1. That alarm uses `Invocation5XXErrors` / `Invocations` > 5% for two consecutive 5-minute periods, with at least 20 invocations per period.
 - Who is paged: platform lead for the latency case, engineering manager for the P1 case.
 - SLA for response: 15 minutes for the platform lead, 5 minutes for the P1 page.
 ### Resolution Verification
 - p95 `ModelLatency` must be under 20000 microseconds (20 ms) for five consecutive 1-minute periods on every variant still serving traffic, with at least 20 invocations per minute and zero `Invocation5XXErrors`.
 - `northstar-application-latency` must return to `OK`.
-- After a rollback or redeploy, discard the first datapoint. It will read near 24,000 microseconds from cold start and does not mean recovery failed.
+- After a rollback or redeploy, start the five-minute check once the endpoint has warmed up. Cold-start requests (~24,000 microseconds) do not mean recovery failed, but they still count against the 20 ms SLO error budget.
 ### Post-Incident Actions
 - Within 24 hours: write up the timeline, which variant was affected, the latency and error graphs, and any delayed campaigns. Clean up the canary variant if it was rolled back, and add a load or warm-up check for the confirmed cause.
 - Postmortem required: yes if the incident reaches P1, a campaign was delayed, or p95 stayed above 500 ms for 30 minutes or more. Otherwise record cause and fix in the ticket.
+ 
